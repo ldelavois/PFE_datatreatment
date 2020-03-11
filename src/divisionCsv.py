@@ -8,7 +8,7 @@ import datetime
 import sys
 
 class Csv:
-
+    isBall = False
     def __init__(self):
 
         #create arguments
@@ -57,9 +57,12 @@ class Csv:
 
         self.indexRobotX = header.index("pos_robotX")
         self.indexRobotY = header.index("pos_robotY")
-        self.indexBallX = header.index("pos_ballX")
-        self.indexBallY = header.index("pos_ballY")
         self.indexApprochState = header.index("state")
+        if 'pos_ballX' in header:
+            isBall = True
+            self.indexBallX = header.index("pos_ballX")
+            self.indexBallY = header.index("pos_ballY")
+
 
         ##loop for each line in the csv file
         for line in reader:
