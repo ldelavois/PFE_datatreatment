@@ -5,7 +5,6 @@ import csv
 import numpy as np
 import datetime
 
-epsilon = 0.03 #3cm
 date = datetime.datetime.now()
 flag = 0
 tmp = []

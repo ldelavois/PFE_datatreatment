@@ -81,6 +81,11 @@ class Csv:
 
         ##loop for each line in the csv file
         for line in reader:
+            print (line[self.indexRobotX])
+            if float(line[self.indexRobotX]) < 0.0 :
+                line[self.indexRobotX] = str(abs(float(line[self.indexRobotX])))
+            if float(line[self.indexRobotY]) < 0.0 :
+                line[self.indexRobotY] = str(abs(float(line[self.indexRobotY])))
 
             if newBallPos == False :
 
@@ -214,10 +219,10 @@ class Csv:
             plt.xlabel('x')
             plt.ylabel('y')
             axes = plt.axes()
-            axes.set_ylim([min(minY)-0.2,max(maxY)+0.2])
-            axes.set_yticks([min(minY),0,max(maxY)])
-            axes.set_xlim([min(minX)-0.2,max(maxX)+0.2])
-            axes.set_xticks([min(minX),min(minX)/2,max(maxX)/2,max(maxX)])
+            # axes.set_ylim([min(minY)-0.2,max(maxY)+0.2])
+            # axes.set_yticks([min(minY),0,max(maxY)])
+            # axes.set_xlim([min(minX)-0.2,max(maxX)+0.2])
+            # axes.set_xticks([min(minX),min(minX)/2,max(maxX)/2,max(maxX)])
 
             # axes.set_ylim([-5,5])
             # axes.set_yticks([-4,0,4])
@@ -250,9 +255,9 @@ class Csv:
 
 isBall = False
 isState = False
-programme = Csv()
-programme.divisioncsv()
-programme.plots()
+prgm = Csv()
+prgm.divisioncsv()
+prgm.plots()
 
     ############
     ##debugger
