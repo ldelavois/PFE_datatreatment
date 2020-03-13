@@ -3,9 +3,8 @@
 import argparse
 import matplotlib.pyplot as plt
 import csv
-import numpy as np
-import datetime
 import sys
+import os
 #import divisionCsv
 
 class ComparePlots:
@@ -32,12 +31,20 @@ class ComparePlots:
             print("Error: File 2 is not a .csv file")
             sys.exit()
 
+        if 'approach' not in self.args.files[0] or 'position' not in self.args.files[1]:
+            print("Error: File 1 must be approach file\n File 2 must be position file")
+
+
     def compareplots(self):
         self.paths=self.args.files
         numFile = 1
         plt.xlabel('x')
         plt.ylabel('y')
         axes = plt.axes()
+        axes.set_ylim([-1.5,1.5])
+        axes.set_yticks([-1,0,1])
+        axes.set_xlim([-0.5,3.5])
+        axes.set_xticks([0,1,2,3])
         plt.title('Trajectories')
 
         for path in self.paths:
@@ -46,6 +53,10 @@ class ComparePlots:
             header =next((plots))
             indexRobotX = header.index("pos_robotX")
             indexRobotY = header.index("pos_robotY")
+            if 'pos_ballX' in header:
+                self.indexBallX = header.index("pos_ballX")
+                self.indexBallY = header.index("pos_ballY")
+                BallX, BallY = [],[]
             RobotX, RobotY = [],[]
             lines = [list(map(float, line)) for line in plots]
 
@@ -53,11 +64,22 @@ class ComparePlots:
 
                 RobotX.append(line[indexRobotX])
                 RobotY.append(line[indexRobotY])
+                if 'pos_ballX' in header:
+                    print(line[self.indexBallX])
+                    print(line[self.indexBallY])
+                    BallX.append(line[self.indexBallX])
+                    BallY.append(line[self.indexBallY])
+            plt.plot(RobotX,RobotY,label =os.path.basename(path))
+            if 'pos_ballX' in header:
+                plt.plot(BallX,BallY,'.',label ='Ball')
 
-            plt.plot(RobotX,RobotY,label ='File ' + str(numFile))
+
+
+
+
             numFile+=1
         plt.legend()
-        plt.savefig('compare.png')
+        plt.savefig(str(self.paths[0][:-4])+'-compare.png')
         plt.show()
 
 
