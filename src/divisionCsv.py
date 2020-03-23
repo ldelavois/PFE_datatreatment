@@ -4,7 +4,6 @@ import argparse
 import matplotlib.pyplot as plt
 import csv
 import numpy as np
-import datetime
 import sys
 
 
@@ -32,6 +31,9 @@ class Csv:
         self.parser.add_argument("-line", action="store_true", required = False,
                                         help= "Plot lines between dots")
 
+        self.parser.add_argument("-t","--target", type=float, nargs=2, required = False,
+                                        help= "Target position (x,y) and plot it")
+
 
         self.args = self.parser.parse_args()
 
@@ -50,7 +52,7 @@ class Csv:
             self.path= self.args.file[0]
             print(self.path)
 
-        date = datetime.datetime.now()
+
         flag = 0
         tmp = []
         self.nbTrajectories = 1
@@ -59,7 +61,6 @@ class Csv:
         newTrajectorie = True
         header = ''
         timeShoot = 0.0
-        strDate = str(date.year) + '-' + str(date.month) + '-' + str(date.day) + '-' + str(date.hour) + 'h' + str(date.minute) + 'm' + str(date.second) + 's'
         newBallPos = False
 
         ##open the csv file to be treated
@@ -73,6 +74,9 @@ class Csv:
         if 'state' in header:
             isState = True
             self.indexApprochState = header.index("state")
+        if 'approach_state' in header:
+            isState = True
+            self.indexApprochState = header.index("approach_state")
         if 'pos_ballX' in header:
             isBall = True
             self.indexBallX = header.index("pos_ballX")
@@ -81,21 +85,22 @@ class Csv:
 
         ##loop for each line in the csv file
         for line in reader:
-            print (line[self.indexRobotX])
             if float(line[self.indexRobotX]) < 0.0 :
                 line[self.indexRobotX] = str(abs(float(line[self.indexRobotX])))
-            # if float(line[self.indexRobotY]) < 0.0 :
-            #     line[self.indexRobotY] = str(abs(float(line[self.indexRobotY])))
+            if 'position' in self.path:
+                print(line)
+                line[self.indexRobotY] = str(-1.0*float(line[self.indexRobotY]))
 
             if newBallPos == False :
 
-                # #change approach_state strings to integer
-                # if line[self.indexApprochState] == 'stopping':
-                #     line[self.indexApprochState] = float(0)
-                # if line[self.indexApprochState] == 'place':
-                #     line[self.indexApprochState] = float(1)
-                # if line[self.indexApprochState] == 'shoot':
-                #     line[self.indexApprochState] = float(2)
+                #change approach_state strings to integer
+                if 'approach_state' in header:
+                    if line[self.indexApprochState] == 'stopping':
+                        line[self.indexApprochState] = float(0)
+                    if line[self.indexApprochState] == 'place':
+                        line[self.indexApprochState] = float(1)
+                    if line[self.indexApprochState] == 'shoot':
+                        line[self.indexApprochState] = float(2)
 
                 ##condition to create a new csv file
                 if newTrajectorie == True:
@@ -107,11 +112,11 @@ class Csv:
                     if flag == 0:
                         if self.nbTrajectories > 1:
                             writer.writerow((tmp))
-                            print("ligne au temps t ="+str(tmp[0])+ " ajoutée." )
+                            #print("ligne au temps t ="+str(tmp[0])+ " ajoutée." )
                         else:
                             tmp = line
                             writer.writerow((line))
-                            print("ligne au temps t ="+str(line[0])+ " ajoutée." )
+                            #print("ligne au temps t ="+str(line[0])+ " ajoutée." )
                         flag = 1
 
                 # if  isBall == True:
@@ -123,17 +128,18 @@ class Csv:
                 if self.args.all:
                     writer = csv.writer(output, lineterminator='\n')
                     writer.writerow((line))
-                    print("ligne au temps t ="+str(line[0])+ " ajoutée." )
+                    #print("ligne au temps t ="+str(line[0])+ " ajoutée." )
                     tmp = line
                 else:
-                    if abs(float(line[self.indexRobotX])-float(tmp[self.indexRobotX])) >= 0.03 and abs(float(line[1])-float(tmp[1])) < 2 or newBallPos == True:
+                    if abs(float(line[self.indexRobotX])-float(tmp[self.indexRobotX])) >= 0.03 and abs(float(line[self.indexRobotX])-float(tmp[self.indexRobotX])) < 2 or newBallPos == True:
                         writer = csv.writer(output, lineterminator='\n')
                         writer.writerow((line))
-                        print("ligne au temps t ="+str(line[0])+ " ajoutée." )
+                        #print("ligne au temps t ="+str(line[0])+ " ajoutée." )
                         tmp = line
-
+                print ("")
                 ##if diff PosX > 2, condition is ok to create a new csv file and copy the current line
                 if abs(float(line[self.indexRobotX])-float(tmp[self.indexRobotX])) >= 2 :
+                    print("new")
                     tmp = line
                     self.nbTrajectories+=1
                     newTrajectorie = True
@@ -150,14 +156,15 @@ class Csv:
         global isState
     ### plots
         if self.args.save or self.args.show:
-            if isBall == True:
-                BallX,BallY = [],[]
+
 
             maxX, minX, maxY, minY = [], [], [], []
             i=1
 
 
             while i <= self.nbTrajectories:
+                if isBall == True:
+                    BallX,BallY = [],[]
                 RobotX,RobotY = [],[]
                 if isState == True:
                     RobotXStop, RobotXPlace, RobotXShoot = [],[],[]
@@ -176,7 +183,7 @@ class Csv:
                         if line[self.indexApprochState] == 1:
                             RobotXPlace.append(line[self.indexRobotX])
                             RobotYPlace.append(line[self.indexRobotY])
-                            print (RobotXPlace)
+                            #print (RobotXPlace)
 
                         if line[self.indexApprochState] == 2:
                             RobotXShoot.append(line[self.indexRobotX])
@@ -184,31 +191,32 @@ class Csv:
 
                     RobotX.append(line[self.indexRobotX])
                     RobotY.append(line[self.indexRobotY])
-                    print (str(line[self.indexRobotX])+' , '+str(line[self.indexRobotX]))
+                    #print (str(line[self.indexRobotX])+' , '+str(line[self.indexRobotX]))
 
                     if isBall == True:
-                        BallX.append(line[self.indexBallX])
+                        BallX.append(abs(line[self.indexBallX]))
                         BallY.append(line[self.indexBallY])
 
 
-                    #     if line[self.indexRobotX] > line[self.indexBallX] :
-                    #         maxX.append(line[self.indexRobotX])
-                    #         minX.append(line[self.indexBallX])
-                    #     else:
-                    #         maxX.append(line[self.indexBallX])
-                    #         minX.append(line[self.indexRobotX])
-                    #
-                    #     if line[self.indexRobotY] > line[self.indexBallY] :
-                    #         maxY.append(line[self.indexRobotY])
-                    #         minY.append(line[self.indexBallY])
-                    #     else:
-                    #         maxY.append(line[self.indexBallY])
-                    #         minY.append(line[self.indexRobotY])
-                    # else:
-                    #     maxX.append(line[self.indexRobotX])
-                    #     maxY.append(line[self.indexRobotY])
-                    #     minX.append(line[self.indexRobotX])
-                    #     minY.append(line[self.indexRobotY])
+                        if line[self.indexRobotX] > line[self.indexBallX] :
+                            maxX.append(line[self.indexRobotX])
+                            minX.append(line[self.indexBallX])
+                        else:
+                            maxX.append(line[self.indexBallX])
+                            minX.append(line[self.indexRobotX])
+
+                        if line[self.indexRobotY] > line[self.indexBallY] :
+                            maxY.append(line[self.indexRobotY])
+                            minY.append(line[self.indexBallY])
+                        else:
+                            maxY.append(line[self.indexBallY])
+                            minY.append(line[self.indexRobotY])
+                    else:
+                        maxX.append(line[self.indexRobotX])
+                        maxY.append(line[self.indexRobotY])
+                        minX.append(line[self.indexRobotX])
+                        minY.append(line[self.indexRobotY])
+
                 plt.figure()
                 plt.xlabel('x')
                 plt.ylabel('y')
@@ -216,17 +224,21 @@ class Csv:
                 axes.set_ylim([-1.5,1.5])
                 axes.set_yticks([-1,0,1])
                 axes.set_xlim([-0.5,3.5])
+
                 axes.set_xticks([0,1,2,3])
                 plt.title('Trajectories')
 
 
                 if self.args.line:
-                    plt.plot(RobotX,RobotY,'r',label ='Robot')
+                    plt.plot(RobotX,RobotY,label ='Robot')
                 else:
                     plt.plot(RobotX,RobotY,'r.',label ='Robot')
 
                 if isBall == True:
-                    plt.plot(BallX,BallY,'k.', label = 'Ball')
+                    plt.plot(BallX,BallY,'.', label = 'Ball')
+
+                if self.args.target :
+                    plt.plot(self.args.target[0],self.args.target[1],'b*', label = 'Target')
 
                 plt.legend()
 

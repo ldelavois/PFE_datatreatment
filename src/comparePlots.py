@@ -21,6 +21,9 @@ class ComparePlots:
         self.parsercompare.add_argument("-line", action="store_true", required = False,
                                         help= "Plot lines between dots")
 
+        self.parsercompare.add_argument("-t","--target", type=float, nargs=2, required = False,
+                                                help= "Target position (x,y) and plot it")
+
         self.args = self.parsercompare.parse_args()
 
         if self.args.files[0][-4:] != '.csv':
@@ -48,6 +51,7 @@ class ComparePlots:
         plt.title('Trajectories')
 
         for path in self.paths:
+            print(path)
             csvfile = open(path,'r')
             plots = csv.reader(csvfile, delimiter=',')
             header =next((plots))
@@ -69,9 +73,15 @@ class ComparePlots:
                     print(line[self.indexBallY])
                     BallX.append(line[self.indexBallX])
                     BallY.append(line[self.indexBallY])
-            plt.plot(RobotX,RobotY,label =os.path.basename(path))
-            if 'pos_ballX' in header:
-                plt.plot(BallX,BallY,'.',label ='Ball')
+            if 'approach' in path:
+                plt.plot(RobotX,RobotY,label='Approach')
+            else:
+                plt.plot(RobotX,RobotY,label='Vive')
+            #if 'pos_ballX' in header:
+                #plt.plot(BallX,BallY,'.',label ='Ball')
+        if self.args.target:
+            plt.plot(self.args.target[0],self.args.target[1],'*', label = 'Target')
+
 
 
 
@@ -81,21 +91,6 @@ class ComparePlots:
         plt.legend()
         plt.savefig(str(self.paths[0][:-4])+'-compare.png')
         plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
