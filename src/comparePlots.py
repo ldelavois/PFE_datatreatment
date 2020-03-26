@@ -51,7 +51,6 @@ class ComparePlots:
         plt.title('Trajectories')
 
         for path in self.paths:
-            print(path)
             csvfile = open(path,'r')
             plots = csv.reader(csvfile, delimiter=',')
             header =next((plots))
@@ -69,8 +68,6 @@ class ComparePlots:
                 RobotX.append(line[indexRobotX])
                 RobotY.append(line[indexRobotY])
                 if 'pos_ballX' in header:
-                    print(line[self.indexBallX])
-                    print(line[self.indexBallY])
                     BallX.append(line[self.indexBallX])
                     BallY.append(line[self.indexBallY])
             if 'approach' in path:

@@ -50,14 +50,14 @@ class Csv:
         ##initialized variables
         if self.args.file:
             self.path= self.args.file[0]
-            print(self.path)
+            #print(self.path)
 
 
         flag = 0
         tmp = []
         self.nbTrajectories = 1
         totalLine = 0
-        lineNumber = 1
+        lineNumber = 0
         newTrajectorie = True
         header = ''
         timeShoot = 0.0
@@ -69,8 +69,13 @@ class Csv:
         reader = csv.reader(input, delimiter=',')
         header = (next(reader)) #memorize the header and go the next line
 
-        self.indexRobotX = header.index("pos_robotX")
-        self.indexRobotY = header.index("pos_robotY")
+        if "pos_robotX" in header and "pos_robotY" in header :
+            self.indexRobotX = header.index("pos_robotX")
+            self.indexRobotY = header.index("pos_robotY")
+        else :
+            print("Error: Wrong header")
+            sys.exit()
+
         if 'state' in header:
             isState = True
             self.indexApprochState = header.index("state")
@@ -85,10 +90,11 @@ class Csv:
 
         ##loop for each line in the csv file
         for line in reader:
+            lineNumber+=1
             if float(line[self.indexRobotX]) < 0.0 :
                 line[self.indexRobotX] = str(abs(float(line[self.indexRobotX])))
             if 'position' in self.path:
-                print(line)
+                #print(line)
                 line[self.indexRobotY] = str(-1.0*float(line[self.indexRobotY]))
 
             if newBallPos == False :
@@ -147,8 +153,11 @@ class Csv:
 
 
 
+
         input.close()
         output.close()
+        if lineNumber <= 20 :
+            print("Warning: The csv file contains just "+ str(lineNumber) + " lines of data.")
 
 
     def plots(self):
