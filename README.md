@@ -1,6 +1,9 @@
 # PFE_datatreatment
 Data treatment of csv files from robot during PFE course
 
+## Script script.sh
+You can run the script script.sh in the src folder to test the fonctions explained below.
+
 ## divisionCsv.py
 The first program will delete close positions and then will divide the csv source file for each trajectory in several csv files. It can also save and show trajectories png graphs. Your csv file should come from approach or vive test.
 
