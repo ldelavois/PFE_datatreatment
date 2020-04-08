@@ -38,6 +38,7 @@ class ComparePlots:
         #check if input 1 is approach and input 2 is position
         if 'approach' not in self.args.files[0] or 'position' not in self.args.files[1]:
             print("Error: File 1 must be approach file\n File 2 must be position file")
+            sys.exit()
 
 
     def compareplots(self):
