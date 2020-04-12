@@ -27,5 +27,7 @@ The second program will compare an approach trajectory from a csv file with a vi
 
 ### Command:
 ```python
-python comparePlots.py -ff approachfile.csv vivefile.csv -target float float
+python comparePlots.py -ff approachfile.csv vivefile.csv
 ```
+### Options
+```-t float float ```: add a target (* symbol) in the graphic with (x,y) coordinates

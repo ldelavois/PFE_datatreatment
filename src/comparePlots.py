@@ -18,9 +18,6 @@ class ComparePlots:
         self.commandType.add_argument("-ff", "--files", type=str, nargs=2,
                                  help="Select two csv files")
 
-        self.parsercompare.add_argument("-line", action="store_true", required = False,
-                                        help= "Plot lines between dots")
-
         self.parsercompare.add_argument("-t","--target", type=float, nargs=2, required = False,
                                                 help= "Target position (x,y) and plot it")
 
@@ -38,6 +35,7 @@ class ComparePlots:
         #check if input 1 is approach and input 2 is position
         if 'approach' not in self.args.files[0] or 'position' not in self.args.files[1]:
             print("Error: File 1 must be approach file\n File 2 must be position file")
+            sys.exit()
 
 
     def compareplots(self):
