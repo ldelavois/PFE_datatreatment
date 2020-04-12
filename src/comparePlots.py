@@ -18,9 +18,6 @@ class ComparePlots:
         self.commandType.add_argument("-ff", "--files", type=str, nargs=2,
                                  help="Select two csv files")
 
-        self.parsercompare.add_argument("-line", action="store_true", required = False,
-                                        help= "Plot lines between dots")
-
         self.parsercompare.add_argument("-t","--target", type=float, nargs=2, required = False,
                                                 help= "Target position (x,y) and plot it")
 
