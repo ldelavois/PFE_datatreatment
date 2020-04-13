@@ -31,3 +31,8 @@ python comparePlots.py -ff approachfile.csv vivefile.csv
 ```
 ### Options
 ```-t float float ```: add a target (* symbol) in the graphic with (x,y) coordinates
+
+## Vive
+
+The file vive_client_to_csv.py needs to be used into Rhoban vive Github (public) : https://github.com/Rhoban/vive_provider.
+This is our client file which allows to save positions of trackers into CSV document.
